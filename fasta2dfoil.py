@@ -106,10 +106,13 @@ def main(arguments=None):
         seqs = {}
         for header, seq in fasta_iter(infilename):
             seqs[header] = seq
-        if list(sorted(seqs.keys())) != list(sorted(taxa)):
+        if not set(seqs.keys()) >= set(taxa):
             raise RuntimeError(
                 "Error: Labels from {} ({}) do not match --names ({})".format(
                     infilename, seqs.keys(), taxa))
+        for taxon in seqs.keys():
+            if not taxon in seqs:
+                del seqs[taxon]
         for label in seqs:
             if len(seqs[label]) != len(seqs[taxa[0]]):
                 raise RuntimeError(
